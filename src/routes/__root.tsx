@@ -1,13 +1,20 @@
-import { HeadContent, Scripts, createRootRoute } from "@tanstack/react-router";
+import {
+  HeadContent,
+  Scripts,
+  createRootRouteWithContext,
+} from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { TanStackDevtools } from "@tanstack/react-devtools";
 
-import Header from "../components/Header";
-
 import appCss from "../styles.css?url";
 import { NotFound } from "@/components/NotFound";
+import type { QueryClient } from "@tanstack/react-query";
+import { DefaultCatchBoundary } from "@/components/DefaultCatchBoundary";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
-export const Route = createRootRoute({
+export const Route = createRootRouteWithContext<{
+  queryClient: QueryClient;
+}>()({
   head: () => ({
     meta: [
       {
@@ -28,7 +35,13 @@ export const Route = createRootRoute({
       },
     ],
   }),
-
+  errorComponent: (props) => {
+    return (
+      <RootDocument>
+        <DefaultCatchBoundary {...props} />
+      </RootDocument>
+    );
+  },
   shellComponent: RootDocument,
   notFoundComponent: () => <NotFound />,
 });
@@ -40,7 +53,6 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <HeadContent />
       </head>
       <body>
-        <Header />
         {children}
         <TanStackDevtools
           config={{
@@ -50,6 +62,10 @@ function RootDocument({ children }: { children: React.ReactNode }) {
             {
               name: "Tanstack Router",
               render: <TanStackRouterDevtoolsPanel />,
+            },
+            {
+              name: "Tanstack Query",
+              render: <ReactQueryDevtools />,
             },
           ]}
         />
