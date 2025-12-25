@@ -142,3 +142,21 @@ body {
 [data-slot="scroll-area-scrollbar"] {
   width: 8px;
 }
+
+.v-list::-webkit-scrollbar {
+  width: 4px;
+}
+.v-list::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 10px;
+}
+/* Track */
+
+/* Handle */
+
+.tagline {
+  background: -webkit-linear-gradient(315deg, cyan 25%, var(--primary));
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}

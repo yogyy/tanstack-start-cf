@@ -10,10 +10,9 @@ export const Route = createFileRoute("/api/messages")({
     handlers: {
       GET: async ({ request }) => {
         const cursor = request.url.split("?cursor=")[1];
-        const limit = 20 + 1;
-        // console.log(cursor);
+        const limit = 30 + 1;
         try {
-          const playlist = await createDB(
+          const messages = await createDB(
             env
           ).query.playlistRecommendations.findMany({
             orderBy: (t, { desc }) => [desc(t.createdAt), desc(t.id)],
@@ -23,12 +22,16 @@ export const Route = createFileRoute("/api/messages")({
           });
 
           return json({
-            data: playlist,
-            prevCursor: playlist.at(-1)?.createdAt.toISOString() ?? null,
+            data: messages,
+            prevCursor:
+              messages.length === limit
+                ? messages.at(-1)?.createdAt.toISOString()
+                : null,
+            hasMore: messages.length === limit,
           });
         } catch (err) {
           console.log(err);
-          return json({ error: "Failed to fetch playlist" }, { status: 500 });
+          return json({ error: "Failed to fetch messages" }, { status: 500 });
         }
       },
     },
